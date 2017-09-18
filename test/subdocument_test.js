@@ -43,6 +43,29 @@ describe('subdocuments', () => {
                 assert(user.posts[0].title === 'All new post');
                 done();
             });
-
+    });
+    it('can remove document from existing record', (done) => {
+        const joe = new User({
+            name: 'Joe',
+            posts: [{
+                title: 'new title'
+            }]
+        });
+        joe.save()
+            .then(() => User.findOne({
+                name: 'Joe'
+            }))
+            .then((user) => {
+                const post = user.posts[0];
+                post.remove();
+                return user.save();
+            })
+            .then(() => User.findOne({
+                name: 'Joe'
+            }))
+            .then((user) => {
+                assert(user.posts.length === 0);
+                done();
+            });
     });
 });
